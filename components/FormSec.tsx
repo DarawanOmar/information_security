@@ -213,12 +213,15 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import CardWrapper from "./CardWrraper";
+import { set } from "react-hook-form";
 
 export default function FormSecurity() {
   const [inputText, setInputText] = useState("");
   const [key, setKey] = useState("");
   const [shift, setShift] = useState("");
   const [outputText, setOutputText] = useState("");
+  const [isEncrypt, setIsEncrypt] = useState(false);
+  const [isDecrypt, setIsDecrypt] = useState(false);
 
   const processCaesarCipher = (isEncrypt: boolean) => {
     const shiftAmount = parseInt(shift, 10) % 26;
@@ -233,8 +236,10 @@ export default function FormSecurity() {
           let processedCode;
           if (isEncrypt) {
             processedCode = ((charCode - 65 + shiftAmount) % 26) + 65;
+            setIsEncrypt(true);
           } else {
             processedCode = ((charCode - 65 - shiftAmount + 26) % 26) + 65;
+            setIsDecrypt(true);
           }
 
           return isUpperCase
@@ -334,17 +339,17 @@ export default function FormSecurity() {
             </Button>
           </CardFooter>
         </Card>
+        <br />
+        {outputText && isEncrypt && (
+          <CardWrapper
+            headerLabel="Encrypt Message"
+            backButtonHref="/dwa"
+            backButtonLabel2="Test"
+          >
+            <div className="text-center ">{outputText}</div>
+          </CardWrapper>
+        )}
       </TabsContent>
-      <br />
-      {outputText && (
-        <CardWrapper
-          headerLabel="Encrypt Message"
-          backButtonHref="/dwa"
-          backButtonLabel2="Test"
-        >
-          <div className="text-center ">{outputText}</div>
-        </CardWrapper>
-      )}
       <TabsContent value="Decrypt">
         <Card>
           <CardHeader>
@@ -386,6 +391,16 @@ export default function FormSecurity() {
             </Button>
           </CardFooter>
         </Card>
+        <br />
+        {outputText && isDecrypt && (
+          <CardWrapper
+            headerLabel="Dencrypt Message"
+            backButtonHref="/dwa"
+            backButtonLabel2="Test"
+          >
+            <div className="text-center ">{outputText}</div>
+          </CardWrapper>
+        )}
       </TabsContent>
     </Tabs>
   );
