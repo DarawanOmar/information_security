@@ -196,8 +196,11 @@
 //     </CardWrapper>
 //   );
 // }
-
+//
 // export default FormSecurity;
+
+// -------------------------------------------------------------------
+
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -213,21 +216,56 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import CardWrapper from "./CardWrraper";
-import { set } from "react-hook-form";
 
 export default function FormSecurity() {
   const [inputText, setInputText] = useState("");
   const [key, setKey] = useState("");
   const [shift, setShift] = useState("");
   const [outputText, setOutputText] = useState("");
-  const [outputDecryptText, setOutputDecryptText] = useState("");
   const [isEncrypt, setIsEncrypt] = useState(false);
   const [isDecrypt, setIsDecrypt] = useState(false);
 
+  const processVigenereCipher = (
+    text: string,
+    key: string,
+    isEncrypt: boolean
+  ) => {
+    let result = "";
+    const keyLength = key.length;
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const charCode = char.toUpperCase().charCodeAt(0);
+      const isUpperCase = char === char.toUpperCase();
+
+      if (char.match(/[A-Za-z]/)) {
+        const keyChar = key[i % keyLength].toUpperCase().charCodeAt(0);
+        let processedCode;
+
+        if (isEncrypt) {
+          processedCode = ((charCode - 65 + (keyChar - 65)) % 26) + 65;
+          setIsEncrypt(true);
+        } else {
+          processedCode = ((charCode - 65 - (keyChar - 65) + 26) % 26) + 65;
+          setIsDecrypt(true);
+        }
+
+        result += isUpperCase
+          ? String.fromCharCode(processedCode)
+          : String.fromCharCode(processedCode).toLowerCase();
+      } else {
+        result += char;
+      }
+    }
+
+    return result;
+  };
+
   const processCaesarCipher = (isEncrypt: boolean) => {
     const shiftAmount = parseInt(shift, 10) % 26;
+    const processedText = processVigenereCipher(inputText, key, isEncrypt);
 
-    const processedText = inputText
+    const caesarResult = processedText
       .split("")
       .map((char) => {
         const isUpperCase = char === char.toUpperCase();
@@ -237,10 +275,8 @@ export default function FormSecurity() {
           let processedCode;
           if (isEncrypt) {
             processedCode = ((charCode - 65 + shiftAmount) % 26) + 65;
-            setIsEncrypt(true);
           } else {
             processedCode = ((charCode - 65 - shiftAmount + 26) % 26) + 65;
-            setIsDecrypt(true);
           }
 
           return isUpperCase
@@ -252,45 +288,7 @@ export default function FormSecurity() {
       })
       .join("");
 
-    setOutputText(processedText);
-  };
-
-  const encryptCaesarCipher = () => {
-    const shiftAmount = parseInt(shift, 10) % 26;
-
-    const encryptedText = inputText
-      .toUpperCase()
-      .split("")
-      .map((char) => {
-        if (char.match(/[A-Z]/)) {
-          const code = char.charCodeAt(0);
-          const encryptedCode = ((code - 65 + shiftAmount) % 26) + 65;
-          return String.fromCharCode(encryptedCode);
-        }
-        return char;
-      })
-      .join("");
-
-    setOutputText(encryptedText);
-  };
-
-  const decryptCaesarCipher = () => {
-    const shiftAmount = parseInt(shift, 10) % 26;
-
-    const decryptedText = inputText
-      .toUpperCase()
-      .split("")
-      .map((char) => {
-        if (char.match(/[A-Z]/)) {
-          const code = char.charCodeAt(0);
-          const decryptedCode = ((code - 65 - shiftAmount + 26) % 26) + 65;
-          return String.fromCharCode(decryptedCode);
-        }
-        return char;
-      })
-      .join("");
-
-    setOutputText(decryptedText);
+    setOutputText(caesarResult);
   };
 
   return (
@@ -407,3 +405,201 @@ export default function FormSecurity() {
     </Tabs>
   );
 }
+
+// "use client";
+// import React, { useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import CardWrapper from "./CardWrraper";
+
+// export default function FormSecurity() {
+//   const [plainText, setPlainText] = useState("");
+//   const [cipherText, setCipherText] = useState("");
+//   const [key, setKey] = useState("");
+//   const [shift, setShift] = useState("");
+
+//   const caesarCipher = (text, shift) => {
+//     return text
+//       .split("")
+//       .map((char) => {
+//         if (char.match(/[a-z]/i)) {
+//           const code = char.charCodeAt(0);
+//           const shifted = code + shift;
+//           return String.fromCharCode(shifted);
+//         } else {
+//           return char;
+//         }
+//       })
+//       .join("");
+//   };
+
+//   const feistelNetwork = (text, key) => {
+//     const blockSize = Math.ceil(text.length / 2);
+//     let left = text.substring(0, blockSize);
+//     let right = text.substring(blockSize);
+
+//     for (let round = 0; round < 16; round++) {
+//       const temp = right;
+//       right = xor(left, feistelFunction(right, key));
+//       left = temp;
+//     }
+
+//     return left + right;
+//   };
+
+//   const xor = (a, b) => {
+//     let result = "";
+//     for (let i = 0; i < a.length; i++) {
+//       result += String.fromCharCode(a.charCodeAt(i) ^ b.charCodeAt(i));
+//     }
+//     return result;
+//   };
+
+//   const feistelFunction = (data, key) => {
+//     // Example: Simple XOR-based feistel function
+//     return xor(data, key);
+//   };
+
+//   const combineCaesarAndFeistel = (text, caesarShift, feistelKey) => {
+//     const caesarResult = caesarCipher(text, caesarShift);
+//     const feistelResult = feistelNetwork(caesarResult, feistelKey);
+//     return feistelResult;
+//   };
+
+//   const processCipher = (isEncrypt) => {
+//     const caesarShiftValue = parseInt(shift, 10);
+
+//     if (isEncrypt) {
+//       const combinedResult = combineCaesarAndFeistel(
+//         plainText,
+//         caesarShiftValue,
+//         key
+//       );
+//       setCipherText(combinedResult);
+//     } else {
+//       // Decrypt using the reverse order of the Caesar and Feistel operations
+//       // Step 1: Reverse the Feistel operation
+//       const reversedFeistel = feistelNetwork(cipherText, key);
+//       // Step 2: Reverse the Caesar operation
+//       const decryptedText = caesarCipher(reversedFeistel, -caesarShiftValue);
+//       setPlainText(decryptedText);
+//     }
+//   };
+
+//   return (
+//     <Tabs defaultValue="Encrypt" className="w-[400px] m-6 md:m-0">
+//       <TabsList className="grid w-full grid-cols-2">
+//         <TabsTrigger value="Encrypt">Encrypt</TabsTrigger>
+//         <TabsTrigger value="Decrypt">Decrypt</TabsTrigger>
+//       </TabsList>
+//       <TabsContent value="Encrypt">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle> Generate Cipher Text</CardTitle>
+//             <CardDescription>Create A Cipher Text</CardDescription>
+//           </CardHeader>
+//           <CardContent className="space-y-2">
+//             <div className="space-y-1">
+//               <Label htmlFor="plainText">Plain Text</Label>
+//               <Input
+//                 placeholder="Pedro Duarte"
+//                 value={plainText}
+//                 onChange={(e) => setPlainText(e.target.value)}
+//               />
+//             </div>
+//             <div className="space-y-1">
+//               <Label htmlFor="key">Key</Label>
+//               <Input
+//                 id="key"
+//                 placeholder="peduarte"
+//                 value={key}
+//                 onChange={(e) => setKey(e.target.value)}
+//               />
+//             </div>
+//             <div className="space-y-1">
+//               <Label htmlFor="shift">Shift</Label>
+//               <Input
+//                 id="shift"
+//                 placeholder="Example : 3"
+//                 value={shift}
+//                 onChange={(e) => setShift(e.target.value)}
+//               />
+//             </div>
+//           </CardContent>
+//           <CardFooter>
+//             <Button className="w-full" onClick={() => processCipher(true)}>
+//               Encrypt Plain Text
+//             </Button>
+//           </CardFooter>
+//         </Card>
+//         <br />
+//         {cipherText && (
+//           <CardWrapper headerLabel="Encrypt Message">
+//             <div className="text-center ">{cipherText}</div>
+//           </CardWrapper>
+//         )}
+//       </TabsContent>
+//       <TabsContent value="Decrypt">
+//         <Card>
+//           <CardHeader>
+//             <CardTitle> Decrypt Cipher Text</CardTitle>
+//             <CardDescription>Create A Cipher Text</CardDescription>
+//           </CardHeader>
+//           <CardContent className="space-y-2">
+//             <div className="space-y-1">
+//               <Label htmlFor="CipherText">Cipher Text</Label>
+//               <Input
+//                 id="CipherText"
+//                 placeholder="Example : kdieyqtzvmdp"
+//                 onChange={(e) => setCipherText(e.target.value)}
+//               />
+//             </div>
+//             <div className="space-y-1">
+//               <Label htmlFor="key">Key</Label>
+//               <Input
+//                 id="key"
+//                 placeholder="Example : peduarte"
+//                 value={key}
+//                 onChange={(e) => setKey(e.target.value)}
+//               />
+//             </div>
+//             <div className="space-y-1">
+//               <Label htmlFor="shift">Shift</Label>
+//               <Input
+//                 id="shift"
+//                 placeholder="Example : 3"
+//                 value={shift}
+//                 onChange={(e) => setShift(e.target.value)}
+//               />
+//             </div>
+//           </CardContent>
+//           <CardFooter>
+//             <Button className="w-full" onClick={() => processCipher(false)}>
+//               Decrypt CipherText
+//             </Button>
+//           </CardFooter>
+//         </Card>
+//         <br />
+//         {plainText && (
+//           <CardWrapper
+//             headerLabel="Dencrypt Message"
+//             backButtonHref="/dwa"
+//             backButtonLabel2="Test"
+//           >
+//             <div className="text-center ">{plainText}</div>
+//           </CardWrapper>
+//         )}
+//       </TabsContent>
+//     </Tabs>
+//   );
+// }

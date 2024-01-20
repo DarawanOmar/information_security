@@ -11,7 +11,7 @@ interface CardWrapperProps {
 
 function CardWrapper({ children, headerLabel }: CardWrapperProps) {
   return (
-    <Card className="w-[340px] md:w-[400px] shadow-xl ">
+    <Card className="shadow-xl ">
       <CardContent>
         <CardHeader>
           <Header label={headerLabel} />
