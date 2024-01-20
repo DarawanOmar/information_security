@@ -1,11 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Header from "@/components/Header";
-import { BackButton } from "./back-button";
 
 interface CardWrapperProps {
   children: React.ReactNode;
@@ -15,24 +9,15 @@ interface CardWrapperProps {
   backButtonHref?: string;
 }
 
-function CardWrapper({
-  backButtonHref,
-  backButtonLabel,
-  children,
-  headerLabel,
-  backButtonLabel2,
-}: CardWrapperProps) {
+function CardWrapper({ children, headerLabel }: CardWrapperProps) {
   return (
-    <Card className="w-[400px] shadow-xl max-md:m-4">
+    <Card className="w-[340px] md:w-[400px] shadow-xl ">
       <CardContent>
         <CardHeader>
           <Header label={headerLabel} />
         </CardHeader>
         {children}
       </CardContent>
-      <CardFooter>
-        <BackButton href={backButtonHref} label={backButtonLabel} />
-      </CardFooter>
     </Card>
   );
 }

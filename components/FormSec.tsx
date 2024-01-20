@@ -220,6 +220,7 @@ export default function FormSecurity() {
   const [key, setKey] = useState("");
   const [shift, setShift] = useState("");
   const [outputText, setOutputText] = useState("");
+  const [outputDecryptText, setOutputDecryptText] = useState("");
   const [isEncrypt, setIsEncrypt] = useState(false);
   const [isDecrypt, setIsDecrypt] = useState(false);
 
@@ -293,7 +294,7 @@ export default function FormSecurity() {
   };
 
   return (
-    <Tabs defaultValue="Encrypt" className="w-[400px]">
+    <Tabs defaultValue="Encrypt" className="w-[400px] m-6 md:m-0">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="Encrypt">Encrypt</TabsTrigger>
         <TabsTrigger value="Decrypt">Decrypt</TabsTrigger>
@@ -317,6 +318,7 @@ export default function FormSecurity() {
               <Label htmlFor="key">Key</Label>
               <Input
                 id="key"
+                value={key}
                 onChange={(e) => setKey(e.target.value)}
                 placeholder="peduarte"
               />
@@ -325,6 +327,7 @@ export default function FormSecurity() {
               <Label htmlFor="shift">Shift</Label>
               <Input
                 id="shift"
+                value={shift}
                 onChange={(e) => setShift(e.target.value)}
                 placeholder="Example : 3"
               />
@@ -341,11 +344,7 @@ export default function FormSecurity() {
         </Card>
         <br />
         {outputText && isEncrypt && (
-          <CardWrapper
-            headerLabel="Encrypt Message"
-            backButtonHref="/dwa"
-            backButtonLabel2="Test"
-          >
+          <CardWrapper headerLabel="Encrypt Message">
             <div className="text-center ">{outputText}</div>
           </CardWrapper>
         )}
@@ -361,6 +360,7 @@ export default function FormSecurity() {
               <Label htmlFor="CipherText">Cipher Text</Label>
               <Input
                 id="CipherText"
+                value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Example : kdieyqtzvmdp"
               />
@@ -369,6 +369,7 @@ export default function FormSecurity() {
               <Label htmlFor="key">Key</Label>
               <Input
                 id="key"
+                value={key}
                 onChange={(e) => setKey(e.target.value)}
                 placeholder="Example : peduarte"
               />
@@ -377,6 +378,7 @@ export default function FormSecurity() {
               <Label htmlFor="shift">Shift</Label>
               <Input
                 id="shift"
+                value={shift}
                 onChange={(e) => setShift(e.target.value)}
                 placeholder="Example : 3"
               />
